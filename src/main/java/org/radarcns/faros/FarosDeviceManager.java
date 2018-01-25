@@ -60,6 +60,7 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
 
     private final static SparseArray<String> FAROS_TYPE_MAP = new SparseArray<>();
     static {
+        FAROS_TYPE_MAP.put(FarosDevice.FAROS_90, "FAROS_90");
         FAROS_TYPE_MAP.put(FarosDevice.FAROS_180, "FAROS_180");
         FAROS_TYPE_MAP.put(FarosDevice.FAROS_360, "FAROS_360");
     }
@@ -197,6 +198,6 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
     @Override
     public void didReceiveBatteryStatus(double timestamp, int status) {
         double timeReceived = System.currentTimeMillis() / 1000d;
-        send(batteryTopic, new FarosBatteryLevel(timestamp, timeReceived, status));
+        send(batteryTopic, new FarosBatteryLevel(timestamp, timeReceived, faros.getBatteryLevel()));
     }
 }
