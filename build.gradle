@@ -1,0 +1,206 @@
+buildscript {
+    repositories {
+        jcenter()
+        google()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
+    }
+}
+
+apply plugin: 'com.android.library'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
+
+android {
+    compileSdkVersion 27
+    buildToolsVersion "27.0.1"
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 27
+        versionCode 1
+        versionName '0.1.0-alpha.1'
+    }
+    lintOptions {
+        abortOnError false
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    libraryVariants.all { variant ->
+        variant.outputs.all {
+            if (variant.name == 'release') {
+                outputFileName = "${archivesBaseName}-${android.defaultConfig.versionName}.aar"
+            } else {
+                outputFileName = "${archivesBaseName}-${android.defaultConfig.versionName}-${variant.name}.aar"
+            }
+        }
+    }
+    packagingOptions {
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/LICENSE'
+    }
+}
+
+//---------------------------------------------------------------------------//
+// Configuration                                                             //
+//---------------------------------------------------------------------------//
+
+group = 'org.radarcns'
+ext.moduleName = 'radar-android-faros'
+ext.description = 'Faros plugin for RADAR passive remote monitoring app'
+ext.githubRepoName = 'RADAR-BASE/radar-android-faros'
+version = android.defaultConfig.versionName
+
+ext.githubUrl = 'https://github.com/' + githubRepoName + '.git'
+ext.issueUrl = 'https://github.com/' + githubRepoName + '/issues'
+ext.website = 'http://radar-cns.org'
+
+//---------------------------------------------------------------------------//
+// Sources and classpath configurations                                      //
+//---------------------------------------------------------------------------//
+
+repositories {
+    jcenter()
+    google()
+    maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local' }
+}
+
+dependencies {
+    api 'org.radarcns:radar-commons-android:0.6'
+    implementation 'org.radarcns:radar-schemas-commons:0.3'
+
+    testImplementation 'junit:junit:4.12'
+    testRuntimeOnly 'org.slf4j:slf4j-simple:1.7.25'
+}
+
+//---------------------------------------------------------------------------//
+// Build system metadata                                                     //
+//---------------------------------------------------------------------------//
+
+ext.sharedManifest = manifest {
+    attributes("Implementation-Title": moduleName,
+            "Implementation-Version": version)
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+    manifest.from sharedManifest
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    android.libraryVariants.all { variant ->
+        if (variant.name == 'release') {
+            owner.classpath += variant.javaCompiler.classpath
+        }
+    }
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    exclude '**/R.java'
+    exclude '**/BuildConfig.java'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+    manifest.from sharedManifest
+}
+
+// add javadoc/source jar tasks as artifacts
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+ext.pomConfig = {
+    licenses {
+        license {
+            name "The Apache Software License, Version 2.0"
+            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution 'repo'
+        }
+    }
+    developers {
+        developer {
+            id 'maximmoinat'
+            name 'Maxim Moinat'
+            email 'maxim@thehyve.nl'
+            organization 'The Hyve'
+        }
+        developer {
+            id 'blootsvoets'
+            name 'Joris Borgdorff'
+            email 'joris@thehyve.nl'
+            organization 'The Hyve'
+        }
+    }
+    issueManagement {
+        system 'GitHub'
+        url githubUrl + '/issues'
+    }
+    organization {
+        name 'RADAR-CNS'
+        url website
+    }
+    scm {
+        connection 'scm:git:' + githubUrl
+        url githubUrl
+    }
+}
+
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            groupId project.group
+            artifactId moduleName
+            version project.version
+        }
+        pom.withXml {
+            def root = asNode()
+            root.appendNode('description', description)
+            root.appendNode('name', moduleName)
+            root.appendNode('url', githubUrl)
+            root.children().last() + pomConfig
+        }
+    }
+}
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+    override = false
+    configurations = ['archives']
+    pkg {
+        repo = project.group
+        name = moduleName
+        userOrg = 'radar-cns'
+        desc = description
+        licenses = ['Apache-2.0']
+        websiteUrl = website
+        issueTrackerUrl = issueUrl
+        vcsUrl = githubUrl
+        githubRepo = githubRepoName
+        githubReleaseNotesFile = 'README.md'
+        version {
+            name = project.version
+            desc = description
+            vcsTag = System.getenv('TRAVIS_TAG')
+            released = new Date()
+            gpg {
+                sign = true //Determines whether to GPG sign the files. The default is false
+            }
+        }
+    }
+}
+
+bintrayUpload.dependsOn 'assembleRelease'
+task wrapper(type: Wrapper) {
+    gradleVersion '4.4'
+}
