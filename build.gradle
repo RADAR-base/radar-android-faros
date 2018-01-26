@@ -69,12 +69,13 @@ ext.website = 'http://radar-cns.org'
 repositories {
     jcenter()
     google()
-    maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local' }
+    flatDir { dirs 'libs' }
 }
 
 dependencies {
     api 'org.radarcns:radar-commons-android:0.6'
     implementation 'org.radarcns:radar-schemas-commons:0.3'
+    implementation 'org.radarcns:radar-faros-sdk-0.1.0-alpha.1@aar'
 
     testImplementation 'junit:junit:4.12'
     testRuntimeOnly 'org.slf4j:slf4j-simple:1.7.25'

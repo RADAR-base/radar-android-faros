@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-public class FarosDeviceManager extends AbstractDeviceManager<FarosService, FarosDeviceStatus> implements FarosDataDelegate, FarosStatusListener {
+public class FarosDeviceManager extends AbstractDeviceManager<FarosService, FarosDeviceStatus> implements FarosDataListener, FarosStatusListener {
     private static final Logger logger = LoggerFactory.getLogger(FarosDeviceManager.class);
 
     private final AvroTopic<ObservationKey, FarosAcceleration> accelerationTopic;
@@ -55,7 +55,7 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
         STATUS_MAP.put(FarosStatusListener.CONNECTING, DeviceStatusListener.Status.CONNECTING);
         STATUS_MAP.put(FarosStatusListener.DISCONNECTED, DeviceStatusListener.Status.DISCONNECTED);
         STATUS_MAP.put(FarosStatusListener.DISCONNECTING, DeviceStatusListener.Status.DISCONNECTED);
-        STATUS_MAP.put(FarosStatusListener.READY, DeviceStatusListener.Status.READY);
+        STATUS_MAP.put(FarosStatusListener.SCANNING, DeviceStatusListener.Status.READY);
     }
 
     private final static SparseArray<String> FAROS_TYPE_MAP = new SparseArray<>();
@@ -68,7 +68,7 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
     private Pattern[] acceptableIds;
 
     private FarosDevice faros;
-    private FarosApiManager apiManager;
+    private FarosSdkManager apiManager;
 
     public FarosDeviceManager(FarosService service) {
         super(service);
@@ -90,14 +90,11 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
     public void start(@NonNull final Set<String> accepTopicIds) {
         logger.info("Faros searching for device.");
 
-        mHandlerThread.start();
-
-        apiManager = new FarosApiFactory().createApiManager(this, this,
-                new Handler(mHandlerThread.getLooper()));
+        apiManager = new FarosSdkFactory().createSdkManager(getService());
 
         try {
-            apiManager.startScanning();
-        } catch (IOException ex) {
+            apiManager.startScanning(this);
+        } catch (IllegalStateException ex) {
             logger.error("Failed to start scanning", ex);
             close();
         }
@@ -156,18 +153,15 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
             return;
         }
         if (Strings.findAny(acceptableIds, device.getName())) {
-            try {
-                device.connect();
-                apiManager.stopScanning();
-                this.faros = device;
-                updateStatus(DeviceStatusListener.Status.CONNECTING);
-                Map<String, String> attributes = new ArrayMap<>(3);
-                attributes.put("name", faros.getName());
-                attributes.put("type", FAROS_TYPE_MAP.get(faros.getType(), "unknown"));
-                getService().registerDevice(faros.getName(), attributes);
-            } catch (IOException ex) {
-                logger.error("Failed to connect to Faros {}", device, ex);
-            }
+            mHandlerThread.start();
+            device.connect(this, new Handler(mHandlerThread.getLooper()));
+            apiManager.stopScanning();
+            this.faros = device;
+            updateStatus(DeviceStatusListener.Status.CONNECTING);
+            Map<String, String> attributes = new ArrayMap<>(3);
+            attributes.put("name", faros.getName());
+            attributes.put("type", FAROS_TYPE_MAP.get(faros.getType(), "unknown"));
+            getService().registerDevice(faros.getName(), attributes);
         }
     }
 
