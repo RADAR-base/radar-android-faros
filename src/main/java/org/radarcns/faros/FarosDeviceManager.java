@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-public class FarosDeviceManager extends AbstractDeviceManager<FarosService, FarosDeviceStatus> implements FarosDataListener, FarosStatusListener {
+public class FarosDeviceManager extends AbstractDeviceManager<FarosService, FarosDeviceStatus> implements FarosDeviceListener, FarosSdkListener {
     private static final Logger logger = LoggerFactory.getLogger(FarosDeviceManager.class);
 
     private final AvroTopic<ObservationKey, FarosAcceleration> accelerationTopic;
@@ -51,11 +51,10 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
     private final HandlerThread mHandlerThread;
     private final static SparseArray<DeviceStatusListener.Status> STATUS_MAP = new SparseArray<>();
     static {
-        STATUS_MAP.put(FarosStatusListener.CONNECTED, DeviceStatusListener.Status.CONNECTED);
-        STATUS_MAP.put(FarosStatusListener.CONNECTING, DeviceStatusListener.Status.CONNECTING);
-        STATUS_MAP.put(FarosStatusListener.DISCONNECTED, DeviceStatusListener.Status.DISCONNECTED);
-        STATUS_MAP.put(FarosStatusListener.DISCONNECTING, DeviceStatusListener.Status.DISCONNECTED);
-        STATUS_MAP.put(FarosStatusListener.SCANNING, DeviceStatusListener.Status.READY);
+        STATUS_MAP.put(FarosDeviceListener.CONNECTED, DeviceStatusListener.Status.CONNECTED);
+        STATUS_MAP.put(FarosDeviceListener.CONNECTING, DeviceStatusListener.Status.CONNECTING);
+        STATUS_MAP.put(FarosDeviceListener.DISCONNECTED, DeviceStatusListener.Status.DISCONNECTED);
+        STATUS_MAP.put(FarosDeviceListener.DISCONNECTING, DeviceStatusListener.Status.DISCONNECTED);
     }
 
     private final static SparseArray<String> FAROS_TYPE_MAP = new SparseArray<>();
@@ -84,6 +83,7 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
         synchronized (this) {
             this.acceptableIds = null;
         }
+        updateStatus(DeviceStatusListener.Status.READY);
     }
 
     @Override
