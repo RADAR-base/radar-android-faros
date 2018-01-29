@@ -33,15 +33,15 @@ This plugin takes the following Firebase configuration parameters:
 | `emotion_faros_inter_beat_interval_enable` | boolean | `true` | Whether to send inter-beat-interval readings. |
 | `emotion_faros_battery_interval` | int (s) | `60` = 1 minute | How often to send the battery level. Use `0` to disable precise battery level collection and opt for approximate battery level instead. |
 
-This plugin produces data for the following topics:
+This plugin produces data for several Kafka topics. All value types are prefixed with the `org.radarcns.passive.emotion` namespace.
 
 | Topic | Type | Description |
 | ----- | ---- | ----------- |
-| `android_emotion_faros_acceleration` | `org.radarcns.passive.emotion.EmotionFarosAcceleration` | Acceleration values. |
-| `android_emotion_faros_ecg` | `org.radarcns.passive.emotion.EmotionFarosEcg` | ECG signal. |
-| `android_emotion_faros_inter_beat_interval` | `org.radarcns.passive.emotion.EmotionFarosInterBeatInterval` | Inter-beat-interval derived from the ECG signal. |
-| `android_emotion_faros_temperature` | `org.radarcns.passive.emotion.EmotionFarosTemperature` | Temperature. |
-| `android_emotion_faros_battery_level` | `org.radarcns.passive.emotion.EmotionFarosBatteryLevel` | Battery level. If `battery_level_interval` is set to `0`, this is an approximation. |
+| `android_emotion_faros_acceleration` | `EmotionFarosAcceleration` | Acceleration values. |
+| `android_emotion_faros_ecg` | `EmotionFarosEcg` | ECG signal. |
+| `android_emotion_faros_inter_beat_interval` | `EmotionFarosInterBeatInterval` | Inter-beat-interval derived from the ECG signal. |
+| `android_emotion_faros_temperature` | `EmotionFarosTemperature` | Temperature. |
+| `android_emotion_faros_battery_level` | `EmotionFarosBatteryLevel` | Battery level. If `battery_level_interval` is set to `0`, this is an approximation. |
 
 ## Contributing
 
