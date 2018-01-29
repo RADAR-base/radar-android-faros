@@ -70,11 +70,12 @@ repositories {
     jcenter()
     google()
     flatDir { dirs 'libs' }
+    maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local' }
 }
 
 dependencies {
     api 'org.radarcns:radar-commons-android:0.6'
-    implementation 'org.radarcns:radar-schemas-commons:0.3'
+    implementation 'org.radarcns:radar-schemas-commons:0.3.1-SNAPSHOT'
     implementation 'org.radarcns:radar-faros-sdk-0.1.0-alpha.1@aar'
 
     testImplementation 'junit:junit:4.12'

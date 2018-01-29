@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.radarcns.faros;
+package org.radarcns.passive.emotion;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -72,8 +72,6 @@ public class FarosDeviceStatus extends BaseDeviceState {
      */
 
     public float getBatteryLevel() { return batteryLevel; }
-
-    public float getHeartRateVariability() { return heartRateVariability; }
 
     @Override
     public boolean hasTemperature() { return true; }
