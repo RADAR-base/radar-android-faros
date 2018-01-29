@@ -65,6 +65,14 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
         FAROS_TYPE_MAP.put(FarosDevice.FAROS_360, "FAROS_360");
     }
 
+    private final static SparseArray<Float> FAROS_BATTERY_STATUS = new SparseArray<>();
+    static {
+        FAROS_BATTERY_STATUS.put(BATTERY_STATUS_CRITICAL, 0.05f);
+        FAROS_BATTERY_STATUS.put(BATTERY_STATUS_LOW, 0.175f);
+        FAROS_BATTERY_STATUS.put(BATTERY_STATUS_MEDIUM, 0.5f);
+        FAROS_BATTERY_STATUS.put(BATTERY_STATUS_FULL, 0.875f);
+    }
+
     private final FarosSdkFactory farosFactory;
 
     private Pattern[] acceptableIds;
@@ -79,11 +87,11 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
         this.farosFactory = factory;
         this.settings = settings;
 
-        accelerationTopic = createTopic("android_faros_acceleration", EmotionFarosAcceleration.class);
-        ecgTopic = createTopic("android_faros_ecg", EmotionFarosEcg.class);
-        ibiTopic = createTopic("android_faros_inter_beat_interval", EmotionFarosInterBeatInterval.class);
-        temperatureTopic = createTopic("android_faros_temperature", EmotionFarosTemperature.class);
-        batteryTopic = createTopic("android_faros_battery_level", EmotionFarosBatteryLevel.class);
+        accelerationTopic = createTopic("android_emotion_faros_acceleration", EmotionFarosAcceleration.class);
+        ecgTopic = createTopic("android_emotion_faros_ecg", EmotionFarosEcg.class);
+        ibiTopic = createTopic("android_emotion_faros_inter_beat_interval", EmotionFarosInterBeatInterval.class);
+        temperatureTopic = createTopic("android_emotion_faros_temperature", EmotionFarosTemperature.class);
+        batteryTopic = createTopic("android_emotion_faros_battery_level", EmotionFarosBatteryLevel.class);
 
         mHandlerThread = new HandlerThread("Faros");
 
@@ -203,7 +211,17 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
 
     @Override
     public void didReceiveBatteryStatus(double timestamp, int status) {
-        // do not act on battery status.
+        // only send approximate battery levels if the battery level interval is disabled.
+        if (settings.getBatteryLevelInterval() != 0) {
+            return;
+        }
+        double timeReceived = System.currentTimeMillis() / 1000d;
+        float level = FAROS_BATTERY_STATUS.get(status, -1f);
+        if (level == -1f) {
+            logger.warn("Unknown battery status {} passed", status);
+            return;
+        }
+        send(batteryTopic, new EmotionFarosBatteryLevel(timestamp, timeReceived, level));
     }
 
     @Override
