@@ -57,10 +57,11 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
     private final HandlerThread mHandlerThread;
     private final static SparseArray<DeviceStatusListener.Status> STATUS_MAP = new SparseArray<>();
     static {
-        STATUS_MAP.put(FarosDeviceListener.CONNECTED, DeviceStatusListener.Status.CONNECTED);
+        STATUS_MAP.put(FarosDeviceListener.IDLE, DeviceStatusListener.Status.CONNECTING);
         STATUS_MAP.put(FarosDeviceListener.CONNECTING, DeviceStatusListener.Status.CONNECTING);
         STATUS_MAP.put(FarosDeviceListener.DISCONNECTED, DeviceStatusListener.Status.DISCONNECTED);
         STATUS_MAP.put(FarosDeviceListener.DISCONNECTING, DeviceStatusListener.Status.DISCONNECTED);
+        STATUS_MAP.put(FarosDeviceListener.MEASURING, DeviceStatusListener.Status.CONNECTED);
     }
 
     private final static SparseArray<String> FAROS_TYPE_MAP = new SparseArray<>();
@@ -164,8 +165,9 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
         if (radarStatus == null) {
             logger.warn("Faros status {} is unknown", status);
         }
-        if (radarStatus == DeviceStatusListener.Status.CONNECTED) {
+        if (status == FarosDeviceListener.IDLE) {
             applySettings(this.settings);
+            faros.startMeasurements();
         }
         updateStatus(radarStatus);
     }
@@ -175,7 +177,7 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
         if (faros != null) {
             return;
         }
-        if (Strings.findAny(acceptableIds, device.getName())) {
+        if (acceptableIds.length == 0 || Strings.findAny(acceptableIds, device.getName())) {
             mHandlerThread.start();
             device.connect(this, new Handler(mHandlerThread.getLooper()));
             apiManager.stopScanning();
@@ -211,7 +213,11 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
     @Override
     public void didReceiveEcg(double timestamp, float[] channels) {
         double timeReceived = System.currentTimeMillis() / 1000d;
-        send(ecgTopic, new EmotionFarosEcg(timestamp, timeReceived, channels[0], channels[1], channels[2]));
+        Float channelOne = channels[0];
+        Float channelTwo = channels.length > 1 ? channels[1] : null;
+        Float channelThree = channels.length > 2 ? channels[2] : null;
+
+        send(ecgTopic, new EmotionFarosEcg(timestamp, timeReceived, channelOne, channelTwo, channelThree));
     }
 
     @Override
