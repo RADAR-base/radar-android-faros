@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package org.radarcns.passive.emotion;
+package org.radarcns.passive.bittium;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import org.radarcns.android.device.DeviceService;
-import org.radarcns.faros.FarosSdkFactory;
-import org.radarcns.faros.FarosSettings;
+import org.radarcns.bittium.faros.FarosSdkFactory;
+import org.radarcns.bittium.faros.FarosSettings;
 
-import static org.radarcns.passive.emotion.FarosProvider.ACC_RATE_KEY;
-import static org.radarcns.passive.emotion.FarosProvider.ACC_RESOLUTION_KEY;
-import static org.radarcns.passive.emotion.FarosProvider.BATTERY_INTERVAL_KEY;
-import static org.radarcns.passive.emotion.FarosProvider.ECG_CHANNELS_KEY;
-import static org.radarcns.passive.emotion.FarosProvider.ECG_FILTER_FREQUENCY_KEY;
-import static org.radarcns.passive.emotion.FarosProvider.ECG_RATE_KEY;
-import static org.radarcns.passive.emotion.FarosProvider.ECG_RESOLUTION_KEY;
-import static org.radarcns.passive.emotion.FarosProvider.IBI_ENABLE_KEY;
-import static org.radarcns.passive.emotion.FarosProvider.TEMP_ENABLE_KEY;
+import static org.radarcns.passive.bittium.FarosProvider.ACC_RATE_KEY;
+import static org.radarcns.passive.bittium.FarosProvider.ACC_RESOLUTION_KEY;
+import static org.radarcns.passive.bittium.FarosProvider.BATTERY_INTERVAL_KEY;
+import static org.radarcns.passive.bittium.FarosProvider.ECG_CHANNELS_KEY;
+import static org.radarcns.passive.bittium.FarosProvider.ECG_FILTER_FREQUENCY_KEY;
+import static org.radarcns.passive.bittium.FarosProvider.ECG_RATE_KEY;
+import static org.radarcns.passive.bittium.FarosProvider.ECG_RESOLUTION_KEY;
+import static org.radarcns.passive.bittium.FarosProvider.IBI_ENABLE_KEY;
+import static org.radarcns.passive.bittium.FarosProvider.TEMP_ENABLE_KEY;
 
 /**
  * A service that manages a FarosDeviceManager and a TableDataHandler to send store the data of a

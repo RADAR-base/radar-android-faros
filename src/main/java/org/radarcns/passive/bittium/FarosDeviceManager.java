@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.radarcns.passive.emotion;
+package org.radarcns.passive.bittium;
 
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -24,13 +24,18 @@ import android.util.SparseArray;
 
 import org.radarcns.android.device.AbstractDeviceManager;
 import org.radarcns.android.device.DeviceStatusListener;
-import org.radarcns.faros.FarosDevice;
-import org.radarcns.faros.FarosDeviceListener;
-import org.radarcns.faros.FarosSdkFactory;
-import org.radarcns.faros.FarosSdkListener;
-import org.radarcns.faros.FarosSdkManager;
-import org.radarcns.faros.FarosSettings;
+import org.radarcns.bittium.faros.FarosDevice;
+import org.radarcns.bittium.faros.FarosDeviceListener;
+import org.radarcns.bittium.faros.FarosSdkFactory;
+import org.radarcns.bittium.faros.FarosSdkListener;
+import org.radarcns.bittium.faros.FarosSdkManager;
+import org.radarcns.bittium.faros.FarosSettings;
 import org.radarcns.kafka.ObservationKey;
+import org.radarcns.passive.emotion.EmotionFarosAcceleration;
+import org.radarcns.passive.emotion.EmotionFarosBatteryLevel;
+import org.radarcns.passive.emotion.EmotionFarosEcg;
+import org.radarcns.passive.emotion.EmotionFarosInterBeatInterval;
+import org.radarcns.passive.emotion.EmotionFarosTemperature;
 import org.radarcns.topic.AvroTopic;
 import org.radarcns.util.Strings;
 import org.slf4j.Logger;

@@ -2,6 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.radarcns.faros" >
     <application android:allowBackup="true">
-        <service android:name="org.radarcns.passive.emotion.FarosService"/>
+        <service android:name="org.radarcns.passive.bittium.FarosService"/>
     </application>
 </manifest>
