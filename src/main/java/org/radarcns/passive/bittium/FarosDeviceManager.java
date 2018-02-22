@@ -31,11 +31,6 @@ import org.radarcns.bittium.faros.FarosSdkListener;
 import org.radarcns.bittium.faros.FarosSdkManager;
 import org.radarcns.bittium.faros.FarosSettings;
 import org.radarcns.kafka.ObservationKey;
-import org.radarcns.passive.emotion.EmotionFarosAcceleration;
-import org.radarcns.passive.emotion.EmotionFarosBatteryLevel;
-import org.radarcns.passive.emotion.EmotionFarosEcg;
-import org.radarcns.passive.emotion.EmotionFarosInterBeatInterval;
-import org.radarcns.passive.emotion.EmotionFarosTemperature;
 import org.radarcns.topic.AvroTopic;
 import org.radarcns.util.Strings;
 import org.slf4j.Logger;
@@ -49,11 +44,11 @@ import java.util.regex.Pattern;
 public class FarosDeviceManager extends AbstractDeviceManager<FarosService, FarosDeviceStatus> implements FarosDeviceListener, FarosSdkListener {
     private static final Logger logger = LoggerFactory.getLogger(FarosDeviceManager.class);
 
-    private final AvroTopic<ObservationKey, EmotionFarosAcceleration> accelerationTopic;
-    private final AvroTopic<ObservationKey, EmotionFarosEcg> ecgTopic;
-    private final AvroTopic<ObservationKey, EmotionFarosInterBeatInterval> ibiTopic;
-    private final AvroTopic<ObservationKey, EmotionFarosTemperature> temperatureTopic;
-    private final AvroTopic<ObservationKey, EmotionFarosBatteryLevel> batteryTopic;
+    private final AvroTopic<ObservationKey, BittiumFarosAcceleration> accelerationTopic;
+    private final AvroTopic<ObservationKey, BittiumFarosEcg> ecgTopic;
+    private final AvroTopic<ObservationKey, BittiumFarosInterBeatInterval> ibiTopic;
+    private final AvroTopic<ObservationKey, BittiumFarosTemperature> temperatureTopic;
+    private final AvroTopic<ObservationKey, BittiumFarosBatteryLevel> batteryTopic;
     private final HandlerThread mHandlerThread;
     private final static SparseArray<DeviceStatusListener.Status> STATUS_MAP = new SparseArray<>();
     static {
@@ -87,17 +82,17 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
     private FarosSdkManager apiManager;
     private FarosSettings settings;
 
-    public FarosDeviceManager(FarosService service, FarosSdkFactory factory, FarosSettings settings) {
+    FarosDeviceManager(FarosService service, FarosSdkFactory factory, FarosSettings settings) {
         super(service);
 
         this.farosFactory = factory;
         this.settings = settings;
 
-        accelerationTopic = createTopic("android_emotion_faros_acceleration", EmotionFarosAcceleration.class);
-        ecgTopic = createTopic("android_emotion_faros_ecg", EmotionFarosEcg.class);
-        ibiTopic = createTopic("android_emotion_faros_inter_beat_interval", EmotionFarosInterBeatInterval.class);
-        temperatureTopic = createTopic("android_emotion_faros_temperature", EmotionFarosTemperature.class);
-        batteryTopic = createTopic("android_emotion_faros_battery_level", EmotionFarosBatteryLevel.class);
+        accelerationTopic = createTopic("android_bittium_faros_acceleration", BittiumFarosAcceleration.class);
+        ecgTopic = createTopic("android_bittium_faros_ecg", BittiumFarosEcg.class);
+        ibiTopic = createTopic("android_bittium_faros_inter_beat_interval", BittiumFarosInterBeatInterval.class);
+        temperatureTopic = createTopic("android_bittium_faros_temperature", BittiumFarosTemperature.class);
+        batteryTopic = createTopic("android_bittium_faros_battery_level", BittiumFarosBatteryLevel.class);
 
         mHandlerThread = new HandlerThread("Faros");
 
@@ -124,8 +119,11 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
         }
     }
 
-    protected synchronized void updateStatus(DeviceStatusListener.Status status) {
-        super.updateStatus(status);
+    @Override
+    protected void updateStatus(DeviceStatusListener.Status status) {
+        synchronized (this) {
+            super.updateStatus(status);
+        }
     }
 
     @Override
@@ -167,6 +165,7 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
         }
         if (status == FarosDeviceListener.IDLE) {
             applySettings(this.settings);
+            faros.requestBatteryLevel();
             faros.startMeasurements();
         }
         updateStatus(radarStatus);
@@ -178,9 +177,10 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
             return;
         }
         if (acceptableIds.length == 0 || Strings.findAny(acceptableIds, device.getName())) {
+            apiManager.stopScanning();
+
             mHandlerThread.start();
             device.connect(this, new Handler(mHandlerThread.getLooper()));
-            apiManager.stopScanning();
             synchronized (this) {
                 this.faros = device;
                 updateStatus(DeviceStatusListener.Status.CONNECTING);
@@ -195,19 +195,19 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
     @Override
     public void didReceiveAcceleration(double timestamp, float x, float y, float z) {
         double timeReceived = System.currentTimeMillis() / 1000d;
-        send(accelerationTopic, new EmotionFarosAcceleration(timestamp, timeReceived, x, y, z));
+        send(accelerationTopic, new BittiumFarosAcceleration(timestamp, timeReceived, x, y, z));
     }
 
     @Override
     public void didReceiveTemperature(double timestamp, float temperature) {
         double timeReceived = System.currentTimeMillis() / 1000d;
-        send(temperatureTopic, new EmotionFarosTemperature(timestamp, timeReceived, temperature));
+        send(temperatureTopic, new BittiumFarosTemperature(timestamp, timeReceived, temperature));
     }
 
     @Override
     public void didReceiveInterBeatInterval(double timestamp, float interBeatInterval) {
         double timeReceived = System.currentTimeMillis() / 1000d;
-        send(ibiTopic, new EmotionFarosInterBeatInterval(timestamp, timeReceived, interBeatInterval));
+        send(ibiTopic, new BittiumFarosInterBeatInterval(timestamp, timeReceived, interBeatInterval));
     }
 
     @Override
@@ -217,7 +217,7 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
         Float channelTwo = channels.length > 1 ? channels[1] : null;
         Float channelThree = channels.length > 2 ? channels[2] : null;
 
-        send(ecgTopic, new EmotionFarosEcg(timestamp, timeReceived, channelOne, channelTwo, channelThree));
+        send(ecgTopic, new BittiumFarosEcg(timestamp, timeReceived, channelOne, channelTwo, channelThree));
     }
 
     @Override
@@ -232,23 +232,28 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
             logger.warn("Unknown battery status {} passed", status);
             return;
         }
-        send(batteryTopic, new EmotionFarosBatteryLevel(timestamp, timeReceived, level));
+        send(batteryTopic, new BittiumFarosBatteryLevel(timestamp, timeReceived, level, false));
     }
 
     @Override
     public void didReceiveBatteryLevel(double timestamp, float level) {
         double timeReceived = System.currentTimeMillis() / 1000d;
-        send(batteryTopic, new EmotionFarosBatteryLevel(timestamp, timeReceived, level));
+        send(batteryTopic, new BittiumFarosBatteryLevel(timestamp, timeReceived, level, true));
     }
 
-    public void applySettings(FarosSettings settings) {
+    void applySettings(FarosSettings settings) {
         FarosDevice device;
         synchronized (this) {
             device = faros;
             this.settings = settings;
         }
         if (device != null) {
-            device.apply(settings);
+            if (device.isMeasuring()) {
+                device.stopMeasurements();
+                // will apply in onStatusUpdate(), when the device becomes idle.
+            } else {
+                device.apply(settings);
+            }
         }
     }
 }
