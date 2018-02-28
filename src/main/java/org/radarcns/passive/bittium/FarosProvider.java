@@ -21,8 +21,6 @@ import android.support.annotation.NonNull;
 
 import org.radarcns.android.RadarConfiguration;
 import org.radarcns.android.device.DeviceServiceProvider;
-import org.radarcns.faros.BuildConfig;
-import org.radarcns.faros.R;
 
 import java.util.Arrays;
 import java.util.List;
