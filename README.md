@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.radarcns:radar-android-faros:0.1-alpha.1'
+    compile 'org.radarcns:radar-android-faros:0.1.0-alpha.1'
 }
 ```
 
