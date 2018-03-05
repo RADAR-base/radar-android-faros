@@ -222,10 +222,6 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
 
     @Override
     public void didReceiveBatteryStatus(double timestamp, int status) {
-        // only send approximate battery levels if the battery level interval is disabled.
-        if (settings.getBatteryLevelInterval() != 0) {
-            return;
-        }
         double timeReceived = System.currentTimeMillis() / 1000d;
         float level = FAROS_BATTERY_STATUS.get(status, -1f);
         if (level == -1f) {

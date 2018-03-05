@@ -25,7 +25,6 @@ import org.radarcns.bittium.faros.FarosSettings;
 
 import static org.radarcns.passive.bittium.FarosProvider.ACC_RATE_KEY;
 import static org.radarcns.passive.bittium.FarosProvider.ACC_RESOLUTION_KEY;
-import static org.radarcns.passive.bittium.FarosProvider.BATTERY_INTERVAL_KEY;
 import static org.radarcns.passive.bittium.FarosProvider.ECG_CHANNELS_KEY;
 import static org.radarcns.passive.bittium.FarosProvider.ECG_FILTER_FREQUENCY_KEY;
 import static org.radarcns.passive.bittium.FarosProvider.ECG_RATE_KEY;
@@ -73,7 +72,6 @@ public class FarosService extends DeviceService<FarosDeviceStatus> {
                 .ecgHighPassFilter(bundle.getFloat(ECG_FILTER_FREQUENCY_KEY))
                 .interBeatIntervalEnable(bundle.getBoolean(IBI_ENABLE_KEY))
                 .temperatureEnable(bundle.getBoolean(TEMP_ENABLE_KEY))
-                .batteryLevelInterval(bundle.getInt(BATTERY_INTERVAL_KEY))
                 .build();
 
         FarosDeviceManager deviceManager = (FarosDeviceManager) getDeviceManager();
