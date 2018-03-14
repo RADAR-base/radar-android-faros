@@ -40,7 +40,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
-        versionName '0.1.0-alpha.1-SNAPSHOT'
+        versionName '0.1.0-alpha.2-SNAPSHOT'
     }
     lintOptions {
         abortOnError false
@@ -94,7 +94,7 @@ repositories {
 dependencies {
     api 'org.radarcns:radar-commons-android:0.6'
     implementation 'org.radarcns:radar-schemas-commons:0.3.2'
-    implementation 'org.radarcns:radar-faros-sdk:0.1.0-alpha.2'
+    implementation 'org.radarcns:radar-faros-sdk:0.1.0-alpha.3'
 
     testImplementation 'junit:junit:4.12'
     testRuntimeOnly 'org.slf4j:slf4j-simple:1.7.25'

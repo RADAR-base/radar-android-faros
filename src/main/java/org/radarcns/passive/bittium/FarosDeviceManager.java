@@ -49,6 +49,7 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
     private final AvroTopic<ObservationKey, BittiumFarosInterBeatInterval> ibiTopic;
     private final AvroTopic<ObservationKey, BittiumFarosTemperature> temperatureTopic;
     private final AvroTopic<ObservationKey, BittiumFarosBatteryLevel> batteryTopic;
+    private final HandlerThread scannerHandlerThread;
     private final HandlerThread mHandlerThread;
     private final static SparseArray<DeviceStatusListener.Status> STATUS_MAP = new SparseArray<>();
     static {
@@ -94,6 +95,7 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
         temperatureTopic = createTopic("android_bittium_faros_temperature", BittiumFarosTemperature.class);
         batteryTopic = createTopic("android_bittium_faros_battery_level", BittiumFarosBatteryLevel.class);
 
+        scannerHandlerThread = new HandlerThread("BTScanner");
         mHandlerThread = new HandlerThread("Faros");
 
         synchronized (this) {
@@ -108,8 +110,9 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
 
         apiManager = farosFactory.createSdkManager(getService());
 
+        scannerHandlerThread.start();
         try {
-            apiManager.startScanning(this);
+            apiManager.startScanning(this, new Handler(scannerHandlerThread.getLooper()));
         } catch (IllegalStateException ex) {
             logger.error("Failed to start scanning", ex);
             close();
@@ -147,6 +150,7 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
         } catch (NullPointerException npe) {
             logger.info("Can't close an unopened socket");
         }
+        scannerHandlerThread.quitSafely();
         mHandlerThread.quitSafely();
         try {
             apiManager.close();
