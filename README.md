@@ -14,9 +14,12 @@ repositories {
 }
 
 dependencies {
-    compile 'org.radarcns:radar-android-faros:0.1.0-alpha.1'
+    runtimeOnly 'org.radarcns:radar-android-faros:0.1.0-alpha.2'
 }
 ```
+
+In addition, the dependency `runtimeOnly 'org.radarcns:radar-schemas-commons:0.3.2'` 
+or higher should be added
 
 ## Configuration
 

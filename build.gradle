@@ -79,6 +79,7 @@ version = android.defaultConfig.versionName
 ext.githubUrl = 'https://github.com/' + githubRepoName + '.git'
 ext.issueUrl = 'https://github.com/' + githubRepoName + '/issues'
 ext.website = 'http://radar-cns.org'
+ext.nexusRepo = 'https://repo.thehyve.nl/content/repositories/' + (version.endsWith('-SNAPSHOT') ? 'snapshots' : 'releases')
 
 //---------------------------------------------------------------------------//
 // Sources and classpath configurations                                      //
@@ -189,6 +190,20 @@ install {
             root.appendNode('url', githubUrl)
             root.children().last() + pomConfig
         }
+    }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: nexusRepo) {
+                authentication(userName: project.hasProperty('nexusUser') ? project.property('nexusUser') : System.getenv('NEXUS_USER'),
+                        password: project.hasProperty('nexusPassword') ? project.property('nexusPassword') : System.getenv('NEXUS_PASSWORD'))
+            }
+        }
+    }
+    doLast {
+        print "uploaded files to $nexusRepo"
     }
 }
 
