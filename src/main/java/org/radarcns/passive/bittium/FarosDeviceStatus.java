@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.radarcns.passive.emotion;
+package org.radarcns.passive.bittium;
 
 import android.os.Parcel;
 import android.os.Parcelable;

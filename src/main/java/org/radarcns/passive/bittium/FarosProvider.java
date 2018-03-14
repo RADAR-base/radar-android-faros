@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package org.radarcns.passive.emotion;
+package org.radarcns.passive.bittium;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import org.radarcns.android.RadarConfiguration;
 import org.radarcns.android.device.DeviceServiceProvider;
-import org.radarcns.faros.BuildConfig;
-import org.radarcns.faros.R;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,33 +30,33 @@ import static android.Manifest.permission.BLUETOOTH;
 import static android.Manifest.permission.BLUETOOTH_ADMIN;
 
 public class FarosProvider extends DeviceServiceProvider<FarosDeviceStatus> {
-    private static final String FAROS_PREFIX = "org.radarcns.passive.emotion.";
+    private static final String FAROS_PREFIX = "org.radarcns.passive.bittium.";
 
-    private static final String ACC_RATE = "emotion_faros_acceleration_rate";
+    private static final String ACC_RATE = "bittium_faros_acceleration_rate";
     private static final int ACC_RATE_DEFAULT = 25;
 
-    private static final String ACC_RESOLUTION = "emotion_faros_acceleration_resolution";
+    private static final String ACC_RESOLUTION = "bittium_faros_acceleration_resolution";
     private static final float ACC_RESOLUTION_DEFAULT = 0.001f;
 
-    private static final String ECG_RATE = "emotion_faros_ecg_rate";
+    private static final String ECG_RATE = "bittium_faros_ecg_rate";
     private static final int ECG_RATE_DEFAULT = 125;
 
-    private static final String ECG_RESOLUTION = "emotion_faros_ecg_resolution";
+    private static final String ECG_RESOLUTION = "bittium_faros_ecg_resolution";
     private static final float ECG_RESOLUTION_DEFAULT = 1.0f;
 
-    private static final String ECG_CHANNELS = "emotion_faros_ecg_channels";
+    private static final String ECG_CHANNELS = "bittium_faros_ecg_channels";
     private static final int ECG_CHANNELS_DEFAULT = 1;
 
-    private static final String ECG_FILTER_FREQUENCY = "emotion_faros_ecg_filter_frequency";
+    private static final String ECG_FILTER_FREQUENCY = "bittium_faros_ecg_filter_frequency";
     private static final float ECG_FILTER_FREQUENCY_DEFAULT = 0.05f;
 
-    private static final String TEMP_ENABLE = "emotion_faros_temperature_enable";
+    private static final String TEMP_ENABLE = "bittium_faros_temperature_enable";
     private static final boolean TEMP_ENABLE_DEFAULT = true;
 
-    private static final String IBI_ENABLE = "emotion_faros_inter_beat_interval_enable";
+    private static final String IBI_ENABLE = "bittium_faros_inter_beat_interval_enable";
     private static final boolean IBI_ENABLE_DEFAULT = true;
 
-    private static final String BATTERY_INTERVAL = "emotion_faros_battery_interval";
+    private static final String BATTERY_INTERVAL = "bittium_faros_battery_interval";
     private static final int BATTERY_INTERVAL_DEFAULT = 60;
 
     public static final String ACC_RATE_KEY = FAROS_PREFIX + ACC_RATE;
