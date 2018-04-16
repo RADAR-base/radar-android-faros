@@ -232,12 +232,14 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
             logger.warn("Unknown battery status {} passed", status);
             return;
         }
+        getState().setBatteryLevel(level);
         send(batteryTopic, new BittiumFarosBatteryLevel(timestamp, timeReceived, level, false));
     }
 
     @Override
     public void didReceiveBatteryLevel(double timestamp, float level) {
         double timeReceived = System.currentTimeMillis() / 1000d;
+        getState().setBatteryLevel(level);
         send(batteryTopic, new BittiumFarosBatteryLevel(timestamp, timeReceived, level, true));
     }
 
