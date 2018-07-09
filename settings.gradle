@@ -1,0 +1,3 @@
+rootProject.name = 'radar-android-faros'
+
+enableFeaturePreview('STABLE_PUBLISHING')

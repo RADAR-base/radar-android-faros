@@ -22,18 +22,16 @@ import android.os.Parcelable;
 import org.radarcns.android.device.BaseDeviceState;
 import org.radarcns.android.device.DeviceStateCreator;
 
+import java.util.Arrays;
+
 public class FarosDeviceStatus extends BaseDeviceState {
     private float batteryLevel = Float.NaN;
 
-    private float heartRateVariability = Float.NaN; // or RR-interval
+    private float heartRate = Float.NaN; // or RR-interval
 
     private float temperature = Float.NaN;
 
     private float[] acceleration = {Float.NaN, Float.NaN, Float.NaN};
-
-    private float[] ecg = {Float.NaN, Float.NaN, Float.NaN}; // Up to 3 channels
-
-    private int marker = 0;
 
     public static final Parcelable.Creator<FarosDeviceStatus> CREATOR = new DeviceStateCreator<>(FarosDeviceStatus.class);
 
@@ -41,71 +39,79 @@ public class FarosDeviceStatus extends BaseDeviceState {
     public synchronized void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
         dest.writeFloat(this.batteryLevel);
-        dest.writeFloat(this.heartRateVariability);
+        dest.writeFloat(this.heartRate);
         dest.writeFloat(this.temperature);
         dest.writeFloat(this.acceleration[0]);
         dest.writeFloat(this.acceleration[1]);
         dest.writeFloat(this.acceleration[2]);
-        dest.writeFloat(this.ecg[0]);
-        dest.writeFloat(this.ecg[1]);
-        dest.writeFloat(this.ecg[2]);
-        dest.writeInt(this.marker);
     }
 
     public void updateFromParcel(Parcel in) {
         super.updateFromParcel(in);
         batteryLevel = in.readFloat();
-        heartRateVariability = in.readFloat();
+        heartRate = in.readFloat();
         temperature = in.readFloat();
         acceleration[0] = in.readFloat();
         acceleration[1] = in.readFloat();
         acceleration[2] = in.readFloat();
-        ecg[0] = in.readFloat();
-        ecg[1] = in.readFloat();
-        ecg[2] = in.readFloat();
-        marker = in.readInt();
     }
 
+    @Override
+    public synchronized float getBatteryLevel() { return batteryLevel; }
 
-    /**
-     * getter
-     */
-
-    public float getBatteryLevel() { return batteryLevel; }
+    public synchronized void setBatteryLevel(float level) {
+        this.batteryLevel = level;
+    }
 
     @Override
     public boolean hasTemperature() { return true; }
-    public float getTemperature() { return temperature; }
+
+    @Override
+    public synchronized float getTemperature() {
+        return this.temperature;
+    }
+
+    public synchronized void setTemperature(float temp) {
+        this.temperature = temp;
+    }
 
     @Override
     public boolean hasAcceleration() {
         return true;
     }
-    public float[] getAcceleration() {
+
+    @Override
+    public synchronized float[] getAcceleration() {
         return acceleration;
     }
 
-
-    /*
-     * setters
-     */
-
-    public void setBatteryLevel(float level) {
-        this.batteryLevel = level;
+    public synchronized void setAcceleration(float x, float y, float z) {
+        this.acceleration[0] = x;
+        this.acceleration[1] = y;
+        this.acceleration[2] = z;
     }
 
-    public void setHeartRateVariability(float value) {
-        this.heartRateVariability = value;
+    @Override
+    public boolean hasHeartRate() {
+        return true;
     }
 
-    public void setTemperature(float temp) {
-        this.temperature = temp;
+    @Override
+    public synchronized float getHeartRate() {
+        return heartRate;
     }
 
-    public void setAcceleration(float x, float y, float z) {
-        // TODO: is this the correct conversion?
-        this.acceleration[0] = x / (float)Math.pow(2, 12);
-        this.acceleration[1] = y / (float)Math.pow(2, 12);
-        this.acceleration[2] = z / (float)Math.pow(2, 12);
+    public synchronized void setHeartRate(float value) {
+        this.heartRate = value;
+    }
+
+    @Override
+    public String toString() {
+        return "FarosDeviceStatus{" +
+                "batteryLevel=" + batteryLevel +
+                ", heartRate=" + heartRate +
+                ", temperature=" + temperature +
+                ", acceleration=" + Arrays.toString(acceleration) +
+                '}';
     }
 }
