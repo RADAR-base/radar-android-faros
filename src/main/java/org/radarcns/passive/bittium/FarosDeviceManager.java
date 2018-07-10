@@ -41,7 +41,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-public class FarosDeviceManager extends AbstractDeviceManager<FarosService, FarosDeviceStatus> implements FarosDeviceListener, FarosSdkListener {
+public class FarosDeviceManager extends AbstractDeviceManager<FarosService, FarosDeviceStatus>
+        implements FarosDeviceListener, FarosSdkListener {
     private static final Logger logger = LoggerFactory.getLogger(FarosDeviceManager.class);
 
     private final AvroTopic<ObservationKey, BittiumFarosAcceleration> accelerationTopic;
@@ -101,7 +102,6 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
         synchronized (this) {
             this.acceptableIds = null;
         }
-        updateStatus(DeviceStatusListener.Status.READY);
     }
 
     @Override
@@ -113,6 +113,7 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
         scannerHandlerThread.start();
         try {
             apiManager.startScanning(this, new Handler(scannerHandlerThread.getLooper()));
+            updateStatus(DeviceStatusListener.Status.READY);
         } catch (IllegalStateException ex) {
             logger.error("Failed to start scanning", ex);
             close();
@@ -132,33 +133,6 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
     @Override
     protected void registerDeviceAtReady() {
         // custom at device
-    }
-
-    @Override
-    public void close() {
-        if (isClosed()) {
-            return;
-        }
-        logger.info("Faros BT Closing device {}", this);
-        try {
-            super.close();
-            if (faros != null) {
-                faros.close();
-            }
-        } catch (IOException e2) {
-            logger.error("Faros socket close failed");
-        } catch (NullPointerException npe) {
-            logger.info("Can't close an unopened socket");
-        }
-        scannerHandlerThread.quitSafely();
-        mHandlerThread.quitSafely();
-        try {
-            apiManager.close();
-        } catch (IOException e) {
-            logger.warn("Failed to close Faros API manager", e);
-        }
-
-        updateStatus(DeviceStatusListener.Status.DISCONNECTED);
     }
 
     @Override
@@ -199,18 +173,21 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
     @Override
     public void didReceiveAcceleration(double timestamp, float x, float y, float z) {
         double timeReceived = System.currentTimeMillis() / 1000d;
+        getState().setAcceleration(x, y, z);
         send(accelerationTopic, new BittiumFarosAcceleration(timestamp, timeReceived, x, y, z));
     }
 
     @Override
     public void didReceiveTemperature(double timestamp, float temperature) {
         double timeReceived = System.currentTimeMillis() / 1000d;
+        getState().setTemperature(temperature);
         send(temperatureTopic, new BittiumFarosTemperature(timestamp, timeReceived, temperature));
     }
 
     @Override
     public void didReceiveInterBeatInterval(double timestamp, float interBeatInterval) {
         double timeReceived = System.currentTimeMillis() / 1000d;
+        getState().setHeartRate(60 / interBeatInterval);
         send(ibiTopic, new BittiumFarosInterBeatInterval(timestamp, timeReceived, interBeatInterval));
     }
 
@@ -226,18 +203,21 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
 
     @Override
     public void didReceiveBatteryStatus(double timestamp, int status) {
+        // only send approximate battery levels if the battery level interval is disabled.
         double timeReceived = System.currentTimeMillis() / 1000d;
         float level = FAROS_BATTERY_STATUS.get(status, -1f);
         if (level == -1f) {
             logger.warn("Unknown battery status {} passed", status);
             return;
         }
+        getState().setBatteryLevel(level);
         send(batteryTopic, new BittiumFarosBatteryLevel(timestamp, timeReceived, level, false));
     }
 
     @Override
     public void didReceiveBatteryLevel(double timestamp, float level) {
         double timeReceived = System.currentTimeMillis() / 1000d;
+        getState().setBatteryLevel(level);
         send(batteryTopic, new BittiumFarosBatteryLevel(timestamp, timeReceived, level, true));
     }
 
@@ -255,5 +235,32 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
                 device.apply(settings);
             }
         }
+    }
+
+    @Override
+    public void close() {
+        if (isClosed()) {
+            return;
+        }
+        logger.info("Faros BT Closing device {}", this);
+        try {
+            super.close();
+            if (faros != null) {
+                faros.close();
+            }
+        } catch (IOException e2) {
+            logger.error("Faros socket close failed");
+        } catch (NullPointerException npe) {
+            logger.info("Can't close an unopened socket");
+        }
+        scannerHandlerThread.quitSafely();
+        mHandlerThread.quitSafely();
+        try {
+            apiManager.close();
+        } catch (IOException e) {
+            logger.warn("Failed to close Faros API manager", e);
+        }
+
+        updateStatus(DeviceStatusListener.Status.DISCONNECTED);
     }
 }

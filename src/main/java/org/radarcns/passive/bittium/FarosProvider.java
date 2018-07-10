@@ -56,9 +56,6 @@ public class FarosProvider extends DeviceServiceProvider<FarosDeviceStatus> {
     private static final String IBI_ENABLE = "bittium_faros_inter_beat_interval_enable";
     private static final boolean IBI_ENABLE_DEFAULT = true;
 
-    private static final String BATTERY_INTERVAL = "bittium_faros_battery_interval";
-    private static final int BATTERY_INTERVAL_DEFAULT = 60;
-
     public static final String ACC_RATE_KEY = FAROS_PREFIX + ACC_RATE;
     public static final String ACC_RESOLUTION_KEY = FAROS_PREFIX + ACC_RESOLUTION;
     public static final String ECG_RATE_KEY = FAROS_PREFIX + ECG_RATE;
@@ -67,7 +64,6 @@ public class FarosProvider extends DeviceServiceProvider<FarosDeviceStatus> {
     public static final String ECG_FILTER_FREQUENCY_KEY = FAROS_PREFIX + ECG_FILTER_FREQUENCY;
     public static final String IBI_ENABLE_KEY = FAROS_PREFIX + IBI_ENABLE;
     public static final String TEMP_ENABLE_KEY = FAROS_PREFIX + TEMP_ENABLE;
-    public static final String BATTERY_INTERVAL_KEY = FAROS_PREFIX + BATTERY_INTERVAL;
 
     @Override
     public String getDescription() {
@@ -92,13 +88,13 @@ public class FarosProvider extends DeviceServiceProvider<FarosDeviceStatus> {
     @NonNull
     @Override
     public String getDeviceProducer() {
-        return "eMotion";
+        return "Bittium";
     }
 
     @NonNull
     @Override
     public String getDeviceModel() {
-        return "Faros 90/180/360";
+        return "Faros";
     }
 
     @NonNull
@@ -124,6 +120,5 @@ public class FarosProvider extends DeviceServiceProvider<FarosDeviceStatus> {
         bundle.putFloat(ECG_FILTER_FREQUENCY_KEY, config.getFloat(ECG_FILTER_FREQUENCY, ECG_FILTER_FREQUENCY_DEFAULT));
         bundle.putBoolean(TEMP_ENABLE_KEY, config.getBoolean(TEMP_ENABLE, TEMP_ENABLE_DEFAULT));
         bundle.putBoolean(IBI_ENABLE_KEY, config.getBoolean(IBI_ENABLE, IBI_ENABLE_DEFAULT));
-        bundle.putInt(BATTERY_INTERVAL_KEY, config.getInt(BATTERY_INTERVAL, BATTERY_INTERVAL_DEFAULT));
     }
 }
