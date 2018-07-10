@@ -40,8 +40,8 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 1
-        versionName '0.1.0-alpha.3-SNAPSHOT'
+        versionCode 2
+        versionName '0.1.0'
     }
     lintOptions {
         abortOnError false
