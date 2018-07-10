@@ -139,12 +139,6 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     manifest.from sharedManifest
 }
 
-// add javadoc/source jar tasks as artifacts
-artifacts {
-    archives javadocJar
-    archives sourcesJar
-}
-
 publishing {
     publications {
         mavenAar(MavenPublication) {
