@@ -113,6 +113,7 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
         scannerHandlerThread.start();
         try {
             apiManager.startScanning(this, new Handler(scannerHandlerThread.getLooper()));
+            updateStatus(DeviceStatusListener.Status.READY);
         } catch (IllegalStateException ex) {
             logger.error("Failed to start scanning", ex);
             close();
