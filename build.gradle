@@ -232,13 +232,16 @@ artifactory {
             password = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
             maven = true
         }
+	defaults {
+	   publications ('mavenAar')
+	   publishArtifacts = true
+	   publishPom = true
+           properties = ['qa.level': 'basic', 'q.os': 'android']
+	}
     }
 }
 
-artifactoryPublish {
-    publications 'archives'
-    dependsOn 'assembleRelease'
-}
+artifactoryPublish.dependsOn 'assembleRelease'
 
 wrapper {
     gradleVersion '4.8'
