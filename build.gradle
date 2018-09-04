@@ -98,8 +98,8 @@ repositories {
 }
 
 dependencies {
-    api 'org.radarcns:radar-commons-android:0.6.3'
-    implementation 'org.radarcns:radar-schemas-commons:0.3.4'
+    api 'org.radarcns:radar-commons-android:0.6.4-SNAPSHOT'
+    implementation 'org.radarcns:radar-schemas-commons:0.4.0'
     implementation 'org.radarcns:radar-faros-sdk:0.1.0-alpha.3'
 
     testImplementation 'junit:junit:4.12'
@@ -143,13 +143,8 @@ publishing {
     publications {
         mavenAar(MavenPublication) {
             from components.android
-
-            artifact sourcesJar {
-                classifier 'sources'
-            }
-            artifact javadocJar {
-                classifier 'javadoc'
-            }
+            artifact sourcesJar
+            artifact javadocJar
 
             pom {
                 licenses {
@@ -242,5 +237,5 @@ artifactory {
 artifactoryPublish.dependsOn 'assembleRelease'
 
 wrapper {
-    gradleVersion '4.8'
+    gradleVersion '4.9'
 }
