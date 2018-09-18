@@ -56,14 +56,14 @@ public class FarosProvider extends DeviceServiceProvider<FarosDeviceStatus> {
     private static final String IBI_ENABLE = "bittium_faros_inter_beat_interval_enable";
     private static final boolean IBI_ENABLE_DEFAULT = true;
 
-    public static final String ACC_RATE_KEY = FAROS_PREFIX + ACC_RATE;
-    public static final String ACC_RESOLUTION_KEY = FAROS_PREFIX + ACC_RESOLUTION;
-    public static final String ECG_RATE_KEY = FAROS_PREFIX + ECG_RATE;
-    public static final String ECG_RESOLUTION_KEY = FAROS_PREFIX + ECG_RESOLUTION;
-    public static final String ECG_CHANNELS_KEY = FAROS_PREFIX + ECG_CHANNELS;
-    public static final String ECG_FILTER_FREQUENCY_KEY = FAROS_PREFIX + ECG_FILTER_FREQUENCY;
-    public static final String IBI_ENABLE_KEY = FAROS_PREFIX + IBI_ENABLE;
-    public static final String TEMP_ENABLE_KEY = FAROS_PREFIX + TEMP_ENABLE;
+    static final String ACC_RATE_KEY = FAROS_PREFIX + ACC_RATE;
+    static final String ACC_RESOLUTION_KEY = FAROS_PREFIX + ACC_RESOLUTION;
+    static final String ECG_RATE_KEY = FAROS_PREFIX + ECG_RATE;
+    static final String ECG_RESOLUTION_KEY = FAROS_PREFIX + ECG_RESOLUTION;
+    static final String ECG_CHANNELS_KEY = FAROS_PREFIX + ECG_CHANNELS;
+    static final String ECG_FILTER_FREQUENCY_KEY = FAROS_PREFIX + ECG_FILTER_FREQUENCY;
+    static final String IBI_ENABLE_KEY = FAROS_PREFIX + IBI_ENABLE;
+    static final String TEMP_ENABLE_KEY = FAROS_PREFIX + TEMP_ENABLE;
 
     @Override
     public String getDescription() {
