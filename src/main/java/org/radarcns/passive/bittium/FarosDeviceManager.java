@@ -138,10 +138,12 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
     @Override
     public void onStatusUpdate(int status) {
         DeviceStatusListener.Status radarStatus = STATUS_MAP.get(status);
+        logger.debug("Faros status {} and radarStatus {}", status, radarStatus);
         if (radarStatus == null) {
             logger.warn("Faros status {} is unknown", status);
         }
         if (status == FarosDeviceListener.IDLE) {
+            logger.debug("Faros status is IDLE. Request to start/restart measurements.");
             applySettings(this.settings);
             faros.requestBatteryLevel();
             faros.startMeasurements();
@@ -229,9 +231,11 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
         }
         if (device != null) {
             if (device.isMeasuring()) {
+                logger.info("Device is measuring. Stopping device before applying settings.");
                 device.stopMeasurements();
                 // will apply in onStatusUpdate(), when the device becomes idle.
             } else {
+                logger.info("Applying device settings {}", settings);
                 device.apply(settings);
             }
         }
