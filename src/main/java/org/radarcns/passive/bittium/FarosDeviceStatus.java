@@ -24,6 +24,7 @@ import org.radarcns.android.device.DeviceStateCreator;
 
 import java.util.Arrays;
 
+@SuppressWarnings("WeakerAccess")
 public class FarosDeviceStatus extends BaseDeviceState {
     private float batteryLevel = Float.NaN;
 
