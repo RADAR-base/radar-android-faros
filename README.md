@@ -1,6 +1,6 @@
 # Faros RADAR-pRMT plugin
 
-Plugin for the eMotion Faros 90/180/360 devices. The source code for device interaction is
+Plugin for the eMotion Faros 180 and 360 devices. The source code for device interaction is
 closed and maintained by The Hyve. For more information, please contact The Hyve.
 
 ## Installation
