@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    runtimeOnly 'org.radarcns:radar-android-faros:0.1.0'
+    runtimeOnly 'org.radarcns:radar-android-faros:0.1.2'
 }
 ```
 

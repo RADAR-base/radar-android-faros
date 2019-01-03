@@ -41,7 +41,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 3
-        versionName '0.1.2-SNAPSHOT'
+        versionName '0.1.2'
     }
     lintOptions {
         abortOnError false
@@ -94,14 +94,12 @@ repositories {
     google()
     jcenter()
     maven { url 'https://repo.thehyve.nl/content/repositories/releases' }
-    maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local' }
-    flatDir { dirs "$rootDir/libs" }
 }
 
 dependencies {
-    api 'org.radarcns:radar-commons-android:0.9.1'
+    api 'org.radarcns:radar-commons-android:0.9.2'
     implementation 'org.radarcns:radar-schemas-commons:0.4.2'
-    implementation 'org.radarcns:radar-faros-sdk:0.1.0-alpha.4-SNAPSHOT@aar'
+    implementation 'org.radarcns:radar-faros-sdk:0.1.0'
 
     testImplementation 'junit:junit:4.12'
     testRuntimeOnly 'org.slf4j:slf4j-simple:1.7.25'
