@@ -153,18 +153,23 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
 
     @Override
     public void onDeviceScanned(FarosDevice device) {
+        logger.info("Found Faros device {}", device.getName());
         if (faros != null) {
+            logger.info("Faros device {} already set", device.getName());
             return;
         }
         if (acceptableIds.length == 0 || Strings.findAny(acceptableIds, device.getName())) {
+            logger.info("Stopping scanning");
             apiManager.stopScanning();
 
+            logger.info("Connecting to device {}", device.getName());
             mHandlerThread.start();
             device.connect(this, new Handler(mHandlerThread.getLooper()));
             synchronized (this) {
                 this.faros = device;
                 updateStatus(DeviceStatusListener.Status.CONNECTING);
             }
+            logger.info("Registering device {}", device.getName());
             Map<String, String> attributes = new ArrayMap<>(3);
             attributes.put("name", faros.getName());
             attributes.put("type", FAROS_TYPE_MAP.get(faros.getType(), "unknown"));
@@ -259,11 +264,7 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
         }
         scannerHandlerThread.quitSafely();
         mHandlerThread.quitSafely();
-        try {
-            apiManager.close();
-        } catch (IOException e) {
-            logger.warn("Failed to close Faros API manager", e);
-        }
+        apiManager.close();
 
         updateStatus(DeviceStatusListener.Status.DISCONNECTED);
     }
