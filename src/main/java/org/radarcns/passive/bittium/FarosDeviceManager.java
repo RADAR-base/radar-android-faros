@@ -118,7 +118,6 @@ public class FarosDeviceManager extends AbstractDeviceManager<FarosService, Faro
             logger.error("Failed to start scanning", ex);
             close();
         }
-        logger.info("Acceptable Faros IDs {}", accepTopicIds);
         synchronized (this) {
             this.acceptableIds = Strings.containsPatterns(accepTopicIds);
         }
