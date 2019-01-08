@@ -97,8 +97,8 @@ repositories {
 }
 
 dependencies {
-    api 'org.radarcns:radar-commons-android:0.9.2'
-    implementation 'org.radarcns:radar-schemas-commons:0.4.2'
+    api 'org.radarcns:radar-commons-android:0.9.3'
+    implementation 'org.radarcns:radar-schemas-commons:0.4.3'
     implementation 'org.radarcns:radar-faros-sdk:0.1.0'
 
     testImplementation 'junit:junit:4.12'
