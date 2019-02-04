@@ -19,6 +19,7 @@ dependencies {
 ```
 
 ## Configuration
+Change the Faros device configuration from Datalogger mode to Onlinemode through Faros Manager Software.
 
 This plugin takes the following Firebase configuration parameters:
 
