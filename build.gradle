@@ -44,7 +44,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 4
-        versionName '0.1.3-SNAPSHOT'
+        versionName '0.2.0-SNAPSHOT'
     }
     lintOptions {
         abortOnError false
@@ -80,7 +80,7 @@ android {
 
 group = 'org.radarcns'
 ext.moduleName = 'radar-android-faros'
-ext.description = 'Faros plugin for RADAR passive remote monitoring app'
+description = 'Faros plugin for RADAR passive remote monitoring app'
 ext.githubRepoName = 'RADAR-BASE/radar-android-faros'
 version = android.defaultConfig.versionName
 
@@ -135,7 +135,7 @@ ext.sharedManifest = manifest {
 }
 
 task sourcesJar(type: Jar) {
-    classifier = 'sources'
+    archiveClassifier.set('sources')
     from android.sourceSets.main.java.srcDirs
     manifest.from sharedManifest
 }
@@ -149,6 +149,7 @@ task javadoc(type: Javadoc) {
     }
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
     exclude '**/R.java'
+    exclude '**/*.kt'
     exclude '**/BuildConfig.java'
 }
 
@@ -213,7 +214,7 @@ bintray {
         repo = project.group
         name = moduleName
         userOrg = 'radar-cns'
-        desc = description
+        desc = project.description
         licenses = ['Apache-2.0']
         websiteUrl = website
         issueTrackerUrl = issueUrl
@@ -222,7 +223,7 @@ bintray {
         githubReleaseNotesFile = 'README.md'
         version {
             name = project.version
-            desc = description
+            desc = project.description
             vcsTag = System.getenv('TRAVIS_TAG')
             released = new Date()
             gpg {
