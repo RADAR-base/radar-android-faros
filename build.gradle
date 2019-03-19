@@ -101,10 +101,10 @@ repositories {
 }
 
 dependencies {
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     api 'org.radarbase:radar-commons-android:0.10.0-SNAPSHOT'
     implementation 'org.radarcns:radar-schemas-commons:0.4.3'
     implementation 'org.radarcns:radar-faros-sdk:0.1.0'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     testImplementation 'junit:junit:4.12'
     testRuntimeOnly 'org.slf4j:slf4j-simple:1.7.26'
