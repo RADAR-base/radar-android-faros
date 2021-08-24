@@ -1,3 +1,7 @@
+# DEPRECATION NOTICE
+
+All plugin development has moved to https://github.com/RADAR-base/radar-commons-android in the plugins directory. Please view that directory for examples of a plugin.
+
 # Faros RADAR-pRMT plugin
 
 Plugin for the eMotion Faros 180 and 360 devices. The source code for device interaction is
